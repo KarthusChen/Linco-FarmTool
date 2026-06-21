@@ -1,0 +1,41 @@
+# .NET / Visual Studio
+bin/
+obj/
+out/
+*.user
+*.suo
+.vs/
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Bb]in/
+[Oo]bj/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Publish output
+publish/
+*.publish.xml
+
+# 用户本地配置（之后存放窗口位置、皮肤选择等）
+settings.local.json
