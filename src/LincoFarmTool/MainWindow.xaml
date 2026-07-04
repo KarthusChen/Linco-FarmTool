@@ -88,8 +88,8 @@
                     <Button x:Name="PlantBtn" Content="🌱 种菜" Height="28" FontSize="12"
                             Style="{StaticResource AccentButton}" Click="OnPlant"
                             ToolTip="种菜：一键设肝帝闹钟"/>
-                    <Button x:Name="AddBtn" Content="＋" Width="32" Height="28" Margin="6,0,0,0" FontSize="16"
-                            Style="{StaticResource PrimaryButton}" Click="OnAddTask"
+                    <Button x:Name="AddBtn" Content="＋" Width="32" Height="28" Margin="6,0,0,0" FontSize="18"
+                            Padding="0" Style="{StaticResource PrimaryButton}" Click="OnAddTask"
                             ToolTip="手动添加单个闹钟"/>
                 </StackPanel>
             </Grid>

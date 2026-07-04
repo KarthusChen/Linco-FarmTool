@@ -15,13 +15,14 @@
             <DropShadowEffect BlurRadius="22" ShadowDepth="3" Opacity="0.28" Color="#7A6A4A"/>
         </Border.Effect>
 
-        <StackPanel Margin="22,18,22,22">
+        <StackPanel Margin="22,20,20,22">
 
             <!-- 标题栏（可拖动） -->
-            <Grid x:Name="Header" Background="Transparent" Margin="0,0,0,6">
-                <TextBlock Text="⏰ 添加闹钟" FontSize="16" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
-                <Button x:Name="CloseBtn" Content="✕" Width="28" Height="28" HorizontalAlignment="Right"
-                        Style="{StaticResource GhostButton}" FontSize="12" Click="OnCancel"/>
+            <Grid x:Name="Header" Background="Transparent" Margin="0,0,0,6" VerticalAlignment="Center">
+                <TextBlock Text="⏰ 添加闹钟" FontSize="16" FontWeight="Bold"
+                           VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                <Button x:Name="CloseBtn" Content="✕" Width="30" Height="30" HorizontalAlignment="Right"
+                        Padding="0" Style="{StaticResource GhostButton}" FontSize="13" Click="OnCancel"/>
             </Grid>
 
             <TextBlock Text="任务名（如：1号地 浇水）" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,4"/>

@@ -48,12 +48,13 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="16,0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="bd" CornerRadius="10" Background="{StaticResource Brand}" Padding="16,0">
+                        <Border x:Name="bd" CornerRadius="10" Background="{StaticResource Brand}" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -77,7 +78,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="bd" CornerRadius="10" Background="{StaticResource Accent}" Padding="16,0">
+                        <Border x:Name="bd" CornerRadius="10" Background="{StaticResource Accent}" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -99,11 +100,12 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="16,0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="bd" CornerRadius="10" Background="Transparent" Padding="16,0"
+                        <Border x:Name="bd" CornerRadius="10" Background="Transparent" Padding="{TemplateBinding Padding}"
                                 BorderBrush="{StaticResource Line}" BorderThickness="1.5">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
