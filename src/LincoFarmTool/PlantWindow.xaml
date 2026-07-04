@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="种菜"
-        Width="384" SizeToContent="Height"
+        Width="392" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ResizeMode="NoResize"
@@ -25,36 +25,66 @@
                         Padding="0" Style="{StaticResource GhostButton}" FontSize="13" Click="OnCancel"/>
             </Grid>
 
-            <!-- 选作物 -->
+            <!-- 共用：选作物 / 名字 / 周期 -->
             <TextBlock Text="选择作物（选了自动带出周期，可不选）" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,4"/>
             <ComboBox x:Name="CropCombo" Style="{StaticResource ModernCombo}" SelectionChanged="OnCropSelected"/>
 
-            <!-- 作物名 -->
-            <TextBlock Text="作物名" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,14,0,4"/>
-            <TextBox x:Name="NameBox" Style="{StaticResource RoundTextBox}"/>
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Text="作物名" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBox x:Name="NameBox" Style="{StaticResource RoundTextBox}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="自然周期" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton x:Name="Cycle1"  Content="1h"  GroupName="Cycle" Style="{StaticResource Pill}"/>
+                        <RadioButton x:Name="Cycle8"  Content="8h"  GroupName="Cycle" Style="{StaticResource Pill}"/>
+                        <RadioButton x:Name="Cycle16" Content="16h" GroupName="Cycle" IsChecked="True" Style="{StaticResource Pill}"/>
+                        <RadioButton x:Name="Cycle32" Content="32h" GroupName="Cycle" Margin="0" Style="{StaticResource Pill}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
 
-            <!-- 自然周期 -->
-            <TextBlock Text="自然周期" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,14,0,4"/>
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="Cycle1"  Content="1小时"  GroupName="Cycle" Style="{StaticResource Pill}"/>
-                <RadioButton x:Name="Cycle8"  Content="8小时"  GroupName="Cycle" Style="{StaticResource Pill}"/>
-                <RadioButton x:Name="Cycle16" Content="16小时" GroupName="Cycle" IsChecked="True" Style="{StaticResource Pill}"/>
-                <RadioButton x:Name="Cycle32" Content="32小时" GroupName="Cycle" Style="{StaticResource Pill}"/>
-            </StackPanel>
+            <!-- 两种模式 -->
+            <TabControl x:Name="Tabs" Style="{StaticResource PillTabControl}" Margin="0,16,0,0"
+                        Background="Transparent" BorderThickness="0"
+                        SelectionChanged="OnTabChanged">
 
-            <!-- 种植时间 -->
-            <TextBlock Text="种植时间（默认现在，也可选之前种下的时间）" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,14,0,4"/>
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="DayBefore"    Content="前天" GroupName="Day" Style="{StaticResource Pill}"/>
-                <RadioButton x:Name="DayYesterday" Content="昨天" GroupName="Day" Style="{StaticResource Pill}"/>
-                <RadioButton x:Name="DayToday"     Content="今天" GroupName="Day" IsChecked="True" Style="{StaticResource Pill}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Center">
-                <TextBox x:Name="HourBox" Width="56" Text="00" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
-                <TextBlock Text=":" Margin="7,0,7,0" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
-                <TextBox x:Name="MinuteBox" Width="56" Text="00" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
-                <Button Content="此刻" Width="60" Margin="12,0,0,0" Style="{StaticResource GhostButton}" Click="OnNow"/>
-            </StackPanel>
+                <!-- 现在开种 -->
+                <TabItem Header="🌱 现在开种！" Style="{StaticResource PillTab}">
+                    <TextBlock Foreground="{StaticResource Muted}" FontSize="12.5" TextWrapping="Wrap" LineHeight="19"
+                               Text="刚种下就用这个。种下时先亲手浇一次，之后自动排 3 个肝帝闹钟（浇水 2、3 次 + 秒熟收割）。"/>
+                </TabItem>
+
+                <!-- 种了有一会了 -->
+                <TabItem Header="⏳ 种了有一会了！" Style="{StaticResource PillTab}">
+                    <StackPanel>
+                        <TextBlock Foreground="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Text="照着游戏里的剩余时间填，自动算出接下来该几点浇水、几点收割。"/>
+
+                        <TextBlock Text="剩余成熟时间" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,4"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox x:Name="RHour" Width="56" Text="0" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="小时" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                            <TextBox x:Name="RMin" Width="56" Text="0" TextAlignment="Center" Margin="14,0,0,0" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="分钟" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                        </StackPanel>
+
+                        <TextBlock Text="水分剩余持续时间（当前湿润还剩多久，没水填 0）"
+                                   Foreground="{StaticResource Muted}" FontSize="12" Margin="0,12,0,4"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox x:Name="WHour" Width="56" Text="0" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="小时" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                            <TextBox x:Name="WMin" Width="56" Text="0" TextAlignment="Center" Margin="14,0,0,0" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="分钟" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
 
             <!-- 预览 -->
             <Border Background="#FFFFF4E2" BorderBrush="#FFF3DCB0" BorderThickness="1"
