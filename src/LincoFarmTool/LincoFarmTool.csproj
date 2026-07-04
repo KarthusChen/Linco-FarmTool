@@ -20,10 +20,18 @@
     <Company>Linco</Company>
     <Authors>KarthusChen</Authors>
 
+    <!-- 应用图标（小老鼠）：exe 图标 -->
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+
     <!-- 单文件自包含发布（WPF 不支持裁剪，故不 Trim） -->
     <PublishSingleFile>false</PublishSingleFile>
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier Condition="'$(PublishRid)' != ''">$(PublishRid)</RuntimeIdentifier>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 也作为资源打进程序，供窗口 Icon 与托盘图标读取 -->
+    <Resource Include="Assets\icon.ico" />
+  </ItemGroup>
 
 </Project>
