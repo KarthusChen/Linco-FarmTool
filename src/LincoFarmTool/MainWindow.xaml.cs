@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Media;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -22,6 +21,7 @@ public partial class MainWindow : Window
     private readonly ObservableCollection<FarmTask> _tasks = new();
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
     private Forms.NotifyIcon? _trayIcon;
+    private AppSettings _settings = new();
 
     public MainWindow()
     {
@@ -32,6 +32,8 @@ public partial class MainWindow : Window
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
+        _settings = SettingsStore.Load();
+
         // 载入存档
         foreach (var t in TaskStore.Load().OrderBy(t => t.TargetTime))
             _tasks.Add(t);
@@ -53,68 +55,82 @@ public partial class MainWindow : Window
     private void UpdateEmptyHint()
         => EmptyHint.Visibility = _tasks.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
 
-    /// <summary>每秒刷新倒计时并检查是否有任务到点。</summary>
+    /// <summary>每秒刷新倒计时、检查到点、并清理到点超过 10 分钟的闹钟。</summary>
     private void OnTick(object? sender, EventArgs e)
     {
         var now = DateTime.Now;
-        bool anyFired = false;
+        bool changed = false;
 
         foreach (var task in _tasks)
         {
             task.RefreshCountdown(now);
-            if (!task.Fired && task.TargetTime <= now)
+            // 提前 LeadMinutes 分钟就触发，给用户留登录时间
+            if (!task.Fired && task.TargetTime.AddMinutes(-_settings.LeadMinutes) <= now)
             {
                 task.Fired = true;
-                anyFired = true;
+                changed = true;
                 FireAlert(task);
             }
         }
 
-        if (anyFired) TaskStore.Save(_tasks);
+        // 到点超过 10 分钟的闹钟自动删除
+        for (int i = _tasks.Count - 1; i >= 0; i--)
+        {
+            if (_tasks[i].Fired && now >= _tasks[i].TargetTime.AddMinutes(10))
+            {
+                _tasks.RemoveAt(i);
+                changed = true;
+            }
+        }
+
+        if (changed) TaskStore.Save(_tasks);
     }
 
-    /// <summary>到点提醒：声音 + 系统通知 + 猫跳动 + 窗口闪烁。</summary>
+    /// <summary>到点提醒：小老鼠跳着喊 + 系统通知 + 窗口闪烁（无声）。</summary>
     private void FireAlert(FarmTask task)
     {
-        // 1. 声音（连响三声更醒目）
-        PlayAlertSound();
-        // 2. Windows 系统通知（托盘气泡）
-        _trayIcon?.ShowBalloonTip(5000, "🌾 该收菜啦！", $"{task.Name} 时间到！", Forms.ToolTipIcon.Info);
-        // 3. 猫跳动
-        BounceCat();
-        // 4. 窗口闪烁 + 置顶抢一下注意力
+        var remain = task.TargetTime - DateTime.Now;
+        string when = remain.TotalSeconds > 45
+            ? $"还有约 {Math.Max(1, (int)Math.Round(remain.TotalMinutes))} 分钟，快登录！"
+            : "时间到，快操作！";
+
+        // 系统通知（托盘气泡）
+        _trayIcon?.ShowBalloonTip(6000, "🌾 该操作啦！", $"{task.Name}\n{when}", Forms.ToolTipIcon.Info);
+        // 小老鼠跳着喊话，直到点击才停
+        StartAlert();
+        // 窗口闪烁 + 置顶抢一下注意力
         WindowFlasher.Flash(this);
         Topmost = false;
         Topmost = true;
     }
 
-    private static void PlayAlertSound()
-    {
-        // 用系统提示音，连响三声。之后可替换成自定义猫叫 wav。
-        var t = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
-        int count = 0;
-        t.Tick += (_, _) =>
-        {
-            SystemSounds.Exclamation.Play();
-            if (++count >= 3) t.Stop();
-        };
-        SystemSounds.Exclamation.Play();
-        count = 1;
-        t.Start();
-    }
+    private bool _alerting;
 
-    private void BounceCat()
+    /// <summary>进入到点状态：气泡出现 + 小老鼠持续跳动。</summary>
+    private void StartAlert()
     {
+        _alerting = true;
+        SpeechBubble.Visibility = Visibility.Visible;
+
         var anim = new DoubleAnimation
         {
             From = 0,
             To = -14,
-            Duration = TimeSpan.FromMilliseconds(160),
+            Duration = TimeSpan.FromMilliseconds(170),
             AutoReverse = true,
-            RepeatBehavior = new RepeatBehavior(4),
+            RepeatBehavior = RepeatBehavior.Forever,
             EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
         };
         PetShift.BeginAnimation(TranslateTransform.YProperty, anim);
+    }
+
+    /// <summary>点击小老鼠后停下、闭嘴。</summary>
+    private void StopAlert()
+    {
+        _alerting = false;
+        SpeechBubble.Visibility = Visibility.Collapsed;
+        PetShift.BeginAnimation(TranslateTransform.YProperty, null);
+        PetShift.Y = 0;
     }
 
     /// <summary>点 ＋ 添加闹钟。</summary>
@@ -125,6 +141,19 @@ public partial class MainWindow : Window
         {
             InsertSorted(dlg.Result);
             TaskStore.Save(_tasks);
+        }
+    }
+
+    /// <summary>点 🌱 种菜：一键生成肝帝模式的整串浇水/收割闹钟。</summary>
+    private void OnPlant(object sender, RoutedEventArgs e)
+    {
+        var dlg = new PlantWindow { Owner = this };
+        if (dlg.ShowDialog() == true && dlg.Result is { Count: > 0 } alarms)
+        {
+            foreach (var a in alarms) InsertSorted(a);
+            TaskStore.Save(_tasks);
+            _trayIcon?.ShowBalloonTip(4000, "🌱 已排好肝帝闹钟",
+                $"共 {alarms.Count} 个提醒，{alarms[^1].TargetTime:MM-dd HH:mm} 收割", Forms.ToolTipIcon.Info);
         }
     }
 
@@ -149,6 +178,9 @@ public partial class MainWindow : Window
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
+        // 到点喊话时，点一下小老鼠区域就让它停下闭嘴
+        if (_alerting)
+            StopAlert();
         if (e.ButtonState == MouseButtonState.Pressed)
             DragMove();
     }
@@ -156,9 +188,11 @@ public partial class MainWindow : Window
     private void SetupTrayIcon()
     {
         var menu = new Forms.ContextMenuStrip();
-        menu.Items.Add("添加闹钟", null, (_, _) => OnAddTask(this, new RoutedEventArgs()));
+        menu.Items.Add("🌱 种菜（肝帝一键）", null, (_, _) => OnPlant(this, new RoutedEventArgs()));
+        menu.Items.Add("添加单个闹钟", null, (_, _) => OnAddTask(this, new RoutedEventArgs()));
         menu.Items.Add("回到右下角", null, (_, _) => MoveToCorner());
         menu.Items.Add("清除已到点", null, (_, _) => ClearFired());
+        menu.Items.Add(BuildLeadMenu());
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("退出", null, (_, _) => System.Windows.Application.Current.Shutdown());
 
@@ -170,6 +204,31 @@ public partial class MainWindow : Window
             ContextMenuStrip = menu
         };
         _trayIcon.DoubleClick += (_, _) => MoveToCorner();
+    }
+
+    /// <summary>「提前提醒量」子菜单：0 / 1 / 3 / 5 / 10 分钟，当前项打勾。</summary>
+    private Forms.ToolStripMenuItem BuildLeadMenu()
+    {
+        var root = new Forms.ToolStripMenuItem($"提前提醒：{_settings.LeadMinutes} 分钟");
+        foreach (int m in new[] { 0, 1, 3, 5, 10 })
+        {
+            int minutes = m;
+            var item = new Forms.ToolStripMenuItem(minutes == 0 ? "准点提醒" : $"提前 {minutes} 分钟")
+            {
+                Checked = _settings.LeadMinutes == minutes
+            };
+            item.Click += (_, _) =>
+            {
+                _settings.LeadMinutes = minutes;
+                SettingsStore.Save(_settings);
+                // 刷新菜单标题与勾选
+                root.Text = $"提前提醒：{minutes} 分钟";
+                foreach (Forms.ToolStripMenuItem sub in root.DropDownItems)
+                    sub.Checked = sub == item;
+            };
+            root.DropDownItems.Add(item);
+        }
+        return root;
     }
 
     private void MoveToCorner()

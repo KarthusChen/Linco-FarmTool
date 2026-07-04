@@ -1,0 +1,106 @@
+<Window x:Class="LincoFarmTool.PlantWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="种菜"
+        Width="392" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize"
+        FontFamily="Microsoft YaHei UI"
+        TextOptions.TextFormattingMode="Ideal">
+
+    <Border CornerRadius="18" Margin="12" Background="{StaticResource CardBg}"
+            BorderBrush="{StaticResource Line}" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="22" ShadowDepth="3" Opacity="0.28" Color="#7A6A4A"/>
+        </Border.Effect>
+
+        <StackPanel Margin="22,20,20,22">
+
+            <!-- 标题栏 -->
+            <Grid x:Name="Header" Background="Transparent" Margin="0,0,0,6" VerticalAlignment="Center">
+                <TextBlock Text="🌱 种菜 · 一键设肝帝闹钟" FontSize="16" FontWeight="Bold"
+                           VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                <Button x:Name="CloseBtn" Content="✕" Width="30" Height="30" HorizontalAlignment="Right"
+                        Padding="0" Style="{StaticResource GhostButton}" FontSize="13" Click="OnCancel"/>
+            </Grid>
+
+            <!-- 共用：选作物 / 名字 / 周期 -->
+            <TextBlock Text="选择作物（选了自动带出周期，可不选）" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,4"/>
+            <ComboBox x:Name="CropCombo" Style="{StaticResource ModernCombo}" SelectionChanged="OnCropSelected"/>
+
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Text="作物名" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,4"/>
+                    <TextBox x:Name="NameBox" Style="{StaticResource RoundTextBox}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="自然周期" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton x:Name="Cycle1"  Content="1h"  GroupName="Cycle" Style="{StaticResource Pill}"/>
+                        <RadioButton x:Name="Cycle8"  Content="8h"  GroupName="Cycle" Style="{StaticResource Pill}"/>
+                        <RadioButton x:Name="Cycle16" Content="16h" GroupName="Cycle" IsChecked="True" Style="{StaticResource Pill}"/>
+                        <RadioButton x:Name="Cycle32" Content="32h" GroupName="Cycle" Margin="0" Style="{StaticResource Pill}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- 两种模式 -->
+            <TabControl x:Name="Tabs" Style="{StaticResource PillTabControl}" Margin="0,16,0,0"
+                        Background="Transparent" BorderThickness="0"
+                        SelectionChanged="OnTabChanged">
+
+                <!-- 现在开种 -->
+                <TabItem Header="🌱 现在开种！" Style="{StaticResource PillTab}">
+                    <TextBlock Foreground="{StaticResource Muted}" FontSize="12.5" TextWrapping="Wrap" LineHeight="19"
+                               Text="刚种下就用这个。种下时先亲手浇一次，之后自动排 3 个闹钟（浇水 2、3 次 + 秒熟收割）。"/>
+                </TabItem>
+
+                <!-- 种了有一会了 -->
+                <TabItem Header="⏳ 种了有一会了！" Style="{StaticResource PillTab}">
+                    <StackPanel>
+                        <TextBlock Foreground="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10"
+                                   Text="照着游戏里的剩余时间填，自动算出接下来该几点浇水、几点收割。"/>
+
+                        <TextBlock Text="剩余成熟时间" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,0,0,4"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox x:Name="RHour" Width="56" Text="0" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="小时" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                            <TextBox x:Name="RMin" Width="56" Text="0" TextAlignment="Center" Margin="14,0,0,0" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="分钟" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                        </StackPanel>
+
+                        <TextBlock Text="水分剩余持续时间（当前湿润还剩多久，没水填 0）"
+                                   Foreground="{StaticResource Muted}" FontSize="12" Margin="0,12,0,4"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox x:Name="WHour" Width="56" Text="0" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="小时" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                            <TextBox x:Name="WMin" Width="56" Text="0" TextAlignment="Center" Margin="14,0,0,0" Style="{StaticResource RoundTextBox}"/>
+                            <TextBlock Text="分钟" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+
+            <!-- 预览 -->
+            <Border x:Name="PreviewCard" Background="#FFFFF4E2" BorderBrush="#FFF3DCB0" BorderThickness="1"
+                    CornerRadius="12" Padding="14,12" Margin="0,16,0,0">
+                <StackPanel>
+                    <TextBlock x:Name="PreviewTitle" Text="肝帝模式预览" FontWeight="Bold" Foreground="#FFC0791A"/>
+                    <TextBlock x:Name="PreviewBody" Margin="0,6,0,0" FontSize="12.5" LineHeight="20"
+                               Foreground="#FF8A6428" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+                <Button Content="取消" Width="76" Style="{StaticResource GhostButton}" Click="OnCancel"/>
+                <Button Content="🌾 一键设闹钟" Width="164" Margin="10,0,0,0"
+                        Style="{StaticResource AccentButton}" Click="OnOk" IsDefault="True"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

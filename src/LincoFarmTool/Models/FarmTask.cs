@@ -20,8 +20,13 @@ public class FarmTask : INotifyPropertyChanged
 
     public DateTime TargetTime { get; set; }
 
-    /// <summary>是否已经触发过提醒（避免重复响铃）。</summary>
-    public bool Fired { get; set; }
+    /// <summary>是否已经触发过提醒（到点变红、避免重复触发）。</summary>
+    private bool _fired;
+    public bool Fired
+    {
+        get => _fired;
+        set { if (_fired != value) { _fired = value; OnPropertyChanged(nameof(Fired)); } }
+    }
 
     // ↓↓ 以下是显示用属性，不写入存档 ↓↓
 
@@ -43,6 +48,11 @@ public class FarmTask : INotifyPropertyChanged
         if (remaining <= TimeSpan.Zero)
         {
             CountdownText = "⏰ 到点啦！";
+        }
+        else if (Fired)
+        {
+            // 已提前响过，还没到实际时间 → 提示赶紧登录
+            CountdownText = $"⏰ 快登录！还剩 {remaining.Minutes:00}:{remaining.Seconds:00}";
         }
         else
         {
