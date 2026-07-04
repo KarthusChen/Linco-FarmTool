@@ -168,10 +168,13 @@
 
         </StackPanel>
 
-            <!-- 退出按钮（右上角） -->
-            <Button x:Name="ExitBtn" Content="✕" Width="24" Height="24" Padding="0" FontSize="12"
-                    HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-2,-2,0"
-                    Style="{StaticResource GhostButton}" Click="OnExit" ToolTip="退出"/>
+            <!-- 右上角：最小化到托盘 + 退出 -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-2,-2,0">
+                <Button x:Name="MinBtn" Content="—" Width="24" Height="24" Padding="0" FontSize="12"
+                        Style="{StaticResource GhostButton}" Click="OnMinimize" ToolTip="最小化到托盘"/>
+                <Button x:Name="ExitBtn" Content="✕" Width="24" Height="24" Padding="0" FontSize="12" Margin="4,0,0,0"
+                        Style="{StaticResource GhostButton}" Click="OnExit" ToolTip="退出"/>
+            </StackPanel>
         </Grid>
     </Border>
 </Window>

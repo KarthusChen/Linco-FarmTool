@@ -151,6 +151,17 @@ public partial class MainWindow : Window
     private void OnExit(object sender, RoutedEventArgs e)
         => System.Windows.Application.Current.Shutdown();
 
+    /// <summary>点右上角 — 最小化到托盘（隐藏窗口，托盘图标保留）。</summary>
+    private void OnMinimize(object sender, RoutedEventArgs e) => Hide();
+
+    /// <summary>从托盘重新显示桌宠。</summary>
+    private void ShowPet()
+    {
+        Show();
+        Topmost = true;
+        Activate();
+    }
+
     /// <summary>点 🌱 种菜：一键生成肝帝模式的整串浇水/收割闹钟。</summary>
     private void OnPlant(object sender, RoutedEventArgs e)
     {
@@ -195,6 +206,7 @@ public partial class MainWindow : Window
     private void SetupTrayIcon()
     {
         var menu = new Forms.ContextMenuStrip();
+        menu.Items.Add("显示桌宠", null, (_, _) => ShowPet());
         menu.Items.Add("🌱 种菜（肝帝一键）", null, (_, _) => OnPlant(this, new RoutedEventArgs()));
         menu.Items.Add("添加单个闹钟", null, (_, _) => OnAddTask(this, new RoutedEventArgs()));
         menu.Items.Add("回到右下角", null, (_, _) => MoveToCorner());
@@ -224,7 +236,7 @@ public partial class MainWindow : Window
             Text = "Linco 收菜闹钟",
             ContextMenuStrip = menu
         };
-        _trayIcon.DoubleClick += (_, _) => MoveToCorner();
+        _trayIcon.DoubleClick += (_, _) => ShowPet();
     }
 
     /// <summary>从打进程序的资源里读小老鼠图标，失败则回退系统图标。</summary>
