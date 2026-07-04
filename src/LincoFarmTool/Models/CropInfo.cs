@@ -21,4 +21,7 @@ public record CropInfo(string Name, int Level, int NaturalHours)
             return $"{Name}（{NaturalHours}h · Lv.{Level}） 肝帝 {gandi}";
         }
     }
+
+    // 让下拉框直接显示友好文案，而不是 record 默认的 "CropInfo { ... }"
+    public override string ToString() => Display;
 }
