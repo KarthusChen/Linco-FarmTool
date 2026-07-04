@@ -147,6 +147,10 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>点右上角 ✕ 退出程序。</summary>
+    private void OnExit(object sender, RoutedEventArgs e)
+        => System.Windows.Application.Current.Shutdown();
+
     /// <summary>点 🌱 种菜：一键生成肝帝模式的整串浇水/收割闹钟。</summary>
     private void OnPlant(object sender, RoutedEventArgs e)
     {
@@ -215,12 +219,26 @@ public partial class MainWindow : Window
 
         _trayIcon = new Forms.NotifyIcon
         {
-            Icon = Drawing.SystemIcons.Application,
+            Icon = LoadAppIcon(),
             Visible = true,
             Text = "Linco 收菜闹钟",
             ContextMenuStrip = menu
         };
         _trayIcon.DoubleClick += (_, _) => MoveToCorner();
+    }
+
+    /// <summary>从打进程序的资源里读小老鼠图标，失败则回退系统图标。</summary>
+    private static Drawing.Icon LoadAppIcon()
+    {
+        try
+        {
+            var stream = System.Windows.Application
+                .GetResourceStream(new Uri("pack://application:,,,/Assets/icon.ico"))?.Stream;
+            if (stream != null)
+                return new Drawing.Icon(stream, new Drawing.Size(32, 32));
+        }
+        catch { /* 回退 */ }
+        return Drawing.SystemIcons.Application;
     }
 
     private Forms.ToolStripMenuItem? _autostartItem;
