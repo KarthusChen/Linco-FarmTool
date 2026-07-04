@@ -35,6 +35,7 @@ $RECYCLE.BIN/
 
 # Publish output
 publish/
+dist/
 *.publish.xml
 
 # 用户本地配置（之后存放窗口位置、皮肤选择等）

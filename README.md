@@ -61,15 +61,44 @@ dotnet run
 
 启动后小老鼠出现在屏幕右下角。想快速看到点效果：点 `＋` 添加一个「倒计时 0 小时 1 分钟」的闹钟——因默认提前 3 分钟，会立即触发。
 
+## 📦 打包成 exe（分发给非技术用户）
+
+打出来的是**单文件、自包含的绿色 exe**（约 68 MB，内置 .NET 运行时），双击即用、无需安装环境。
+
+**本地一键打包**：
+```powershell
+./publish.ps1        # 产物在 dist/LincoFarmTool.exe
+```
+
+**自动发布（推荐）**：打一个版本 tag，GitHub Actions 会自动构建并发布到 Releases：
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```
+> ⚠️ 要让别人能下载、以及应用内「检查更新」能用，**仓库需设为 public**（私有仓库的 Release 资源无法匿名下载）。
+
+### 安装 / 更新 / 卸载
+
+| 操作 | 怎么做 |
+|---|---|
+| **安装** | 下载 `LincoFarmTool.exe`，放到固定文件夹双击运行；托盘勾选「**开机自启**」即可开机自动启动 |
+| **更新** | 托盘「**检查更新**」——有新版一键下载、自动替换重启，数据不丢（启动时也会静默检查一次） |
+| **卸载** | 托盘「**彻底卸载 / 清理**」清除开机自启项与本地数据并退出，再删掉 exe 即可 |
+
+> 数据（闹钟、设置）存在 `%AppData%\LincoFarmTool\`，与 exe 分离，更新不受影响。
+
 ## 📁 目录结构
 
 ```
 Linco-FarmTool/
 ├── global.json                       # 锁定 .NET 8 SDK
+├── publish.ps1                       # 本地一键打包单文件 exe
+├── .github/workflows/release.yml     # 打 tag 自动构建 + 发布 Release
 └── src/LincoFarmTool/
-    ├── MainWindow.xaml(.cs)           # 桌宠 + 闹钟列表 + 到点喊话/变红/清理
+    ├── MainWindow.xaml(.cs)           # 桌宠 + 闹钟列表 + 到点喊话/变红/清理 + 托盘
     ├── PlantWindow.xaml(.cs)          # 种菜弹窗（现在开种 / 种了有一会了 两 Tab）
     ├── AddTaskWindow.xaml(.cs)        # 手动添加单个闹钟
+    ├── MessageDialog.xaml(.cs)        # 统一风格的确认弹窗
     ├── App.xaml                       # 全局主题（配色 / 按钮 / 药丸 / 下拉 / Tab）
     ├── Models/
     │   ├── FarmTask.cs                # 闹钟任务
@@ -77,16 +106,18 @@ Linco-FarmTool/
     │   └── AppSettings.cs             # 全局设置（提前提醒量）
     ├── Services/
     │   ├── GandiPlanner.cs            # 肝帝排程模拟器
-    │   ├── TaskStore.cs               # 闹钟存档
-    │   └── SettingsStore.cs           # 设置存档
+    │   ├── TaskStore.cs / SettingsStore.cs   # 闹钟 / 设置存档
+    │   ├── UpdateService.cs           # 应用内更新（GitHub Releases）
+    │   └── Autostart.cs               # 开机自启 + 彻底清理
     └── Native/
         └── WindowFlasher.cs           # Win32 窗口闪烁
 ```
 
 ## 🗺 路线图
 
+- [x] 打包为单文件 exe + 应用内更新
 - [ ] 用真实美术替换矢量小老鼠（精灵图 / Live2D）
 - [ ] 到点喊话文案可自定义 / 随机
 - [ ] 收割后一键「再种一轮」
-- [ ] 开机自启 + 记忆窗口位置
-- [ ] 打包为单文件 exe / 安装包
+- [ ] 记忆窗口位置
+- [ ] 自定义应用图标（.ico）
