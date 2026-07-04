@@ -100,16 +100,16 @@ public partial class MainWindow : Window
 
     private static void PlayAlertSound()
     {
-        // 用系统提示音，连响三声。之后可替换成自定义猫叫 wav。
-        var t = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
-        int count = 0;
+        // 小老鼠吱吱声，连响五下
+        const int total = 5;
+        int count = 1;
+        SqueakSound.PlayOnce();
+        var t = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(230) };
         t.Tick += (_, _) =>
         {
-            SystemSounds.Exclamation.Play();
-            if (++count >= 3) t.Stop();
+            SqueakSound.PlayOnce();
+            if (++count >= total) t.Stop();
         };
-        SystemSounds.Exclamation.Play();
-        count = 1;
         t.Start();
     }
 
