@@ -20,6 +20,17 @@
 
         <StackPanel>
 
+            <!-- 到点时小老鼠的喊话气泡 -->
+            <Border x:Name="SpeechBubble" Visibility="Collapsed" HorizontalAlignment="Center"
+                    Background="White" CornerRadius="12" Padding="12,6" Margin="0,0,0,2"
+                    BorderBrush="{StaticResource Accent}" BorderThickness="2">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.25" Color="#7A6A4A"/>
+                </Border.Effect>
+                <TextBlock Text="脑婆脑婆上号啦！" FontWeight="Bold" FontSize="13"
+                           Foreground="{StaticResource Accent}"/>
+            </Border>
+
             <!-- 桌宠：全宇宙最可爱的小老鼠 🐭（拖动手柄 / 整个面板） -->
             <Viewbox x:Name="PetBox" Width="126" Height="104" HorizontalAlignment="Center">
                 <Viewbox.RenderTransform>
@@ -103,8 +114,20 @@
             <ItemsControl x:Name="TaskList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="0,0,0,6" Padding="8,6" CornerRadius="10"
-                                Background="#FFF3F7EC" BorderBrush="#FFDDE8C9" BorderThickness="1">
+                        <Border Margin="0,0,0,6" Padding="8,6" CornerRadius="10" BorderThickness="1">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="#FFF3F7EC"/>
+                                    <Setter Property="BorderBrush" Value="#FFDDE8C9"/>
+                                    <Style.Triggers>
+                                        <!-- 到点：整行变红 -->
+                                        <DataTrigger Binding="{Binding Fired}" Value="True">
+                                            <Setter Property="Background" Value="#FFFCE1DE"/>
+                                            <Setter Property="BorderBrush" Value="#FFED9E97"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -112,7 +135,18 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13"
-                                               Foreground="#FF3E3A2E" TextTrimming="CharacterEllipsis"/>
+                                               TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#FF3E3A2E"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Fired}" Value="True">
+                                                        <Setter Property="Foreground" Value="#FFC0392B"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock FontSize="11" Foreground="#FF8A7B5A">
                                         <Run Text="{Binding CountdownText, Mode=OneWay}"/>
                                         <Run Text="  ·  "/>
