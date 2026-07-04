@@ -44,6 +44,11 @@ public class FarmTask : INotifyPropertyChanged
         {
             CountdownText = "⏰ 到点啦！";
         }
+        else if (Fired)
+        {
+            // 已提前响过，还没到实际时间 → 提示赶紧登录
+            CountdownText = $"⏰ 快登录！还剩 {remaining.Minutes:00}:{remaining.Seconds:00}";
+        }
         else
         {
             int totalHours = (int)remaining.TotalHours;

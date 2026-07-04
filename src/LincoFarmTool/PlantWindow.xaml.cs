@@ -98,8 +98,10 @@ public partial class PlantWindow : Window
         var harvest = alarms[^1].TargetTime;
 
         var lines = alarms.Select(a => $"· {a.Name.Split('·').Last().Trim()}  →  {a.TargetTime:MM-dd HH:mm}");
+        int lead = SettingsStore.Load().LeadMinutes;
+        string leadNote = lead > 0 ? $"（实际会提前 {lead} 分钟提醒，方便登录）" : "（准点提醒）";
         PreviewTitle.Text = $"肝帝模式 · 共 {alarms.Count} 个闹钟，{harvest:MM-dd HH:mm} 收割";
-        PreviewBody.Text = "种下时先亲手浇一次，之后：\n" + string.Join("\n", lines);
+        PreviewBody.Text = "种下时先亲手浇一次，之后：\n" + string.Join("\n", lines) + "\n" + leadNote;
     }
 
     private void OnOk(object sender, RoutedEventArgs e)
