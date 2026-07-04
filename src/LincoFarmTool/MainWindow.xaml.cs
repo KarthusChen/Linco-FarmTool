@@ -114,7 +114,7 @@ public partial class MainWindow : Window
             RepeatBehavior = new RepeatBehavior(4),
             EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
         };
-        CatShift.BeginAnimation(TranslateTransform.YProperty, anim);
+        PetShift.BeginAnimation(TranslateTransform.YProperty, anim);
     }
 
     /// <summary>点 ＋ 添加闹钟。</summary>

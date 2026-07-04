@@ -20,32 +20,63 @@
 
         <StackPanel>
 
-            <!-- 桌宠猫（拖动手柄就是它 / 整个面板） -->
-            <Viewbox x:Name="CatBox" Width="118" Height="96" HorizontalAlignment="Center">
+            <!-- 桌宠：全宇宙最可爱的小老鼠 🐭（拖动手柄 / 整个面板） -->
+            <Viewbox x:Name="PetBox" Width="126" Height="104" HorizontalAlignment="Center">
                 <Viewbox.RenderTransform>
-                    <TranslateTransform x:Name="CatShift" Y="0"/>
+                    <TranslateTransform x:Name="PetShift" Y="0"/>
                 </Viewbox.RenderTransform>
                 <Canvas Width="200" Height="160">
-                    <!-- 身体 -->
-                    <Ellipse Canvas.Left="55" Canvas.Top="55" Width="90" Height="80"
-                             Fill="#FFF3E9D2" Stroke="#FF4A4036" StrokeThickness="3"/>
-                    <!-- 耳朵 -->
-                    <Polygon Points="78,40 92,18 104,42" Fill="#FFF3E9D2" Stroke="#FF4A4036" StrokeThickness="3"/>
-                    <Polygon Points="96,42 108,18 122,40" Fill="#FFF3E9D2" Stroke="#FF4A4036" StrokeThickness="3"/>
-                    <!-- 头 -->
-                    <Ellipse Canvas.Left="70" Canvas.Top="35" Width="60" Height="55"
-                             Fill="#FFF3E9D2" Stroke="#FF4A4036" StrokeThickness="3"/>
-                    <!-- 眼睛 -->
-                    <Ellipse x:Name="EyeL" Canvas.Left="86" Canvas.Top="55" Width="8" Height="8" Fill="#FF4A4036"/>
-                    <Ellipse x:Name="EyeR" Canvas.Left="106" Canvas.Top="55" Width="8" Height="8" Fill="#FF4A4036"/>
+                    <!-- 尾巴（画在最底层） -->
+                    <Path Stroke="#FFE39BB4" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                          Data="M 146,128 C 176,124 182,100 168,92 C 158,86 152,96 160,102"/>
+
+                    <!-- 左耳 -->
+                    <Ellipse Canvas.Left="46" Canvas.Top="34" Width="52" Height="52"
+                             Fill="#FFCFC7DA" Stroke="#FF6B6478" StrokeThickness="3"/>
+                    <Ellipse Canvas.Left="56" Canvas.Top="44" Width="32" Height="32" Fill="#FFF6C2D4"/>
+                    <!-- 右耳 -->
+                    <Ellipse Canvas.Left="102" Canvas.Top="34" Width="52" Height="52"
+                             Fill="#FFCFC7DA" Stroke="#FF6B6478" StrokeThickness="3"/>
+                    <Ellipse Canvas.Left="112" Canvas.Top="44" Width="32" Height="32" Fill="#FFF6C2D4"/>
+
+                    <!-- 身体 / 头（圆滚滚一体） -->
+                    <Ellipse Canvas.Left="52" Canvas.Top="52" Width="96" Height="94"
+                             Fill="#FFDDD6E6" Stroke="#FF6B6478" StrokeThickness="3"/>
+                    <!-- 浅色肚皮 -->
+                    <Ellipse Canvas.Left="74" Canvas.Top="92" Width="52" Height="50" Fill="#FFF3EFF8"/>
+
                     <!-- 腮红 -->
-                    <Ellipse Canvas.Left="80" Canvas.Top="65" Width="10" Height="6" Fill="#55E8836B"/>
-                    <Ellipse Canvas.Left="110" Canvas.Top="65" Width="10" Height="6" Fill="#55E8836B"/>
-                    <!-- 爪子（静止，抱在身前） -->
-                    <Ellipse Canvas.Left="70" Canvas.Top="100" Width="26" Height="22"
-                             Fill="#FFEFE0C4" Stroke="#FF4A4036" StrokeThickness="3"/>
-                    <Ellipse Canvas.Left="104" Canvas.Top="100" Width="26" Height="22"
-                             Fill="#FFEFE0C4" Stroke="#FF4A4036" StrokeThickness="3"/>
+                    <Ellipse Canvas.Left="66" Canvas.Top="98" Width="16" Height="10" Fill="#66F191AE"/>
+                    <Ellipse Canvas.Left="118" Canvas.Top="98" Width="16" Height="10" Fill="#66F191AE"/>
+
+                    <!-- 眼睛（大而亮） -->
+                    <Ellipse Canvas.Left="80" Canvas.Top="78" Width="16" Height="19" Fill="#FF322C3A"/>
+                    <Ellipse Canvas.Left="104" Canvas.Top="78" Width="16" Height="19" Fill="#FF322C3A"/>
+                    <!-- 眼睛高光 -->
+                    <Ellipse Canvas.Left="84" Canvas.Top="81" Width="6" Height="6" Fill="White"/>
+                    <Ellipse Canvas.Left="108" Canvas.Top="81" Width="6" Height="6" Fill="White"/>
+
+                    <!-- 鼻子 -->
+                    <Ellipse Canvas.Left="93" Canvas.Top="100" Width="14" Height="10" Fill="#FFE87DA0"/>
+                    <!-- 嘴 -->
+                    <Path Stroke="#FF6B6478" StrokeThickness="2.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                          Data="M 100,110 C 100,116 94,118 90,115 M 100,110 C 100,116 106,118 110,115"/>
+
+                    <!-- 胡须 -->
+                    <Path Stroke="#FFA79FB6" StrokeThickness="1.6" StrokeStartLineCap="Round"
+                          Data="M 92,104 L 60,98 M 92,108 L 58,110 M 108,104 L 140,98 M 108,108 L 142,110"/>
+
+                    <!-- 小手 + 抱着的菜苗 🌱 -->
+                    <Ellipse Canvas.Left="78" Canvas.Top="126" Width="20" Height="17"
+                             Fill="#FFCFC7DA" Stroke="#FF6B6478" StrokeThickness="2.5"/>
+                    <Ellipse Canvas.Left="102" Canvas.Top="126" Width="20" Height="17"
+                             Fill="#FFCFC7DA" Stroke="#FF6B6478" StrokeThickness="2.5"/>
+                    <Path Stroke="#FF5EA84F" StrokeThickness="4" StrokeStartLineCap="Round"
+                          Data="M 100,132 L 100,120"/>
+                    <Path Fill="#FF7FC66B" Stroke="#FF4F9E44" StrokeThickness="1.5"
+                          Data="M 100,124 C 92,120 88,124 90,130 C 96,130 100,128 100,124 Z"/>
+                    <Path Fill="#FF7FC66B" Stroke="#FF4F9E44" StrokeThickness="1.5"
+                          Data="M 100,122 C 108,117 113,121 111,128 C 104,128 100,126 100,122 Z"/>
                 </Canvas>
             </Viewbox>
 
