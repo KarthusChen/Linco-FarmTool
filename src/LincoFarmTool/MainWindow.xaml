@@ -92,18 +92,18 @@
             </Viewbox>
 
             <!-- 标题栏 -->
-            <Grid Margin="2,2,2,6">
-                <TextBlock Text="🌾 收菜闹钟" FontWeight="Bold" FontSize="14"
-                           Foreground="#FF5A4A2E" VerticalAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Margin="2,2,2,8">
+                <TextBlock Text="🌾 Linco专属收菜闹钟" FontWeight="Bold" FontSize="14"
+                           Foreground="#FF5A4A2E" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
                     <Button x:Name="PlantBtn" Content="🌱 种菜" Height="28" FontSize="12"
                             Style="{StaticResource AccentButton}" Click="OnPlant"
-                            ToolTip="种菜：一键设肝帝闹钟"/>
-                    <Button x:Name="AddBtn" Content="＋" Width="32" Height="28" Margin="6,0,0,0" FontSize="18"
+                            ToolTip="种菜：一键设闹钟"/>
+                    <Button x:Name="AddBtn" Content="＋" Width="32" Height="28" Margin="8,0,0,0" FontSize="18"
                             Padding="0" Style="{StaticResource PrimaryButton}" Click="OnAddTask"
                             ToolTip="手动添加单个闹钟"/>
                 </StackPanel>
-            </Grid>
+            </StackPanel>
 
             <!-- 空状态提示 -->
             <TextBlock x:Name="EmptyHint" Text="还没有闹钟，点 ＋ 添加一个"

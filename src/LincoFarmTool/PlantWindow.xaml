@@ -57,7 +57,7 @@
                 <!-- 现在开种 -->
                 <TabItem Header="🌱 现在开种！" Style="{StaticResource PillTab}">
                     <TextBlock Foreground="{StaticResource Muted}" FontSize="12.5" TextWrapping="Wrap" LineHeight="19"
-                               Text="刚种下就用这个。种下时先亲手浇一次，之后自动排 3 个肝帝闹钟（浇水 2、3 次 + 秒熟收割）。"/>
+                               Text="刚种下就用这个。种下时先亲手浇一次，之后自动排 3 个闹钟（浇水 2、3 次 + 秒熟收割）。"/>
                 </TabItem>
 
                 <!-- 种了有一会了 -->
@@ -98,7 +98,7 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
                 <Button Content="取消" Width="76" Style="{StaticResource GhostButton}" Click="OnCancel"/>
-                <Button Content="🌾 一键设肝帝闹钟" Width="164" Margin="10,0,0,0"
+                <Button Content="🌾 一键设闹钟" Width="164" Margin="10,0,0,0"
                         Style="{StaticResource AccentButton}" Click="OnOk" IsDefault="True"/>
             </StackPanel>
         </StackPanel>
