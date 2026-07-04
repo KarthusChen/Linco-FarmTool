@@ -10,6 +10,20 @@
     <UseWindowsForms>true</UseWindowsForms>
     <!-- 高分屏每显示器 DPI 感知，桌宠不发虚 -->
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+
+    <!-- 版本 & 产品信息（更新检查用它比对） -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Linco 收菜闹钟</Product>
+    <AssemblyTitle>Linco 收菜闹钟</AssemblyTitle>
+    <Company>Linco</Company>
+    <Authors>KarthusChen</Authors>
+
+    <!-- 单文件自包含发布（WPF 不支持裁剪，故不 Trim） -->
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <RuntimeIdentifier Condition="'$(PublishRid)' != ''">$(PublishRid)</RuntimeIdentifier>
   </PropertyGroup>
 
 </Project>

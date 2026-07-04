@@ -50,6 +50,9 @@ public partial class MainWindow : Window
         _timer.Start();
 
         SetupTrayIcon();
+
+        // 启动后静默检查一次更新（有新版才提示）
+        _ = CheckUpdateAsync(manual: false);
     }
 
     private void UpdateEmptyHint()
@@ -194,6 +197,20 @@ public partial class MainWindow : Window
         menu.Items.Add("清除已到点", null, (_, _) => ClearFired());
         menu.Items.Add(BuildLeadMenu());
         menu.Items.Add(new Forms.ToolStripSeparator());
+
+        _autostartItem = new Forms.ToolStripMenuItem("开机自启") { Checked = Autostart.IsEnabled() };
+        _autostartItem.Click += (_, _) =>
+        {
+            bool on = !_autostartItem.Checked;
+            Autostart.Set(on);
+            _autostartItem.Checked = on;
+        };
+        menu.Items.Add(_autostartItem);
+        menu.Items.Add("检查更新", null, async (_, _) => await CheckUpdateAsync(manual: true));
+        menu.Items.Add("彻底卸载 / 清理", null, (_, _) => OnUninstall());
+        menu.Items.Add(new Forms.ToolStripSeparator());
+        var verItem = menu.Items.Add($"版本 v{UpdateService.CurrentVersion}");
+        verItem.Enabled = false;
         menu.Items.Add("退出", null, (_, _) => System.Windows.Application.Current.Shutdown());
 
         _trayIcon = new Forms.NotifyIcon
@@ -205,6 +222,50 @@ public partial class MainWindow : Window
         };
         _trayIcon.DoubleClick += (_, _) => MoveToCorner();
     }
+
+    private Forms.ToolStripMenuItem? _autostartItem;
+
+    /// <summary>检查更新。manual=true 时无更新也提示；启动静默检查用 false。</summary>
+    private async Task CheckUpdateAsync(bool manual)
+    {
+        var info = await UpdateService.CheckAsync();
+        if (info == null)
+        {
+            if (manual)
+                _trayIcon?.ShowBalloonTip(4000, "已是最新版本",
+                    $"当前 v{UpdateService.CurrentVersion}", Forms.ToolTipIcon.Info);
+            return;
+        }
+
+        bool ok = MessageDialog.Confirm(this, "发现新版本 🎉",
+            $"有新版本 v{info.Version}（当前 v{UpdateService.CurrentVersion}）。\n现在下载并更新吗？更新后自动重启，数据不会丢。",
+            okText: "立即更新", cancelText: "以后再说");
+        if (!ok) return;
+
+        _trayIcon?.ShowBalloonTip(4000, "正在下载更新…", "下载完会自动重启", Forms.ToolTipIcon.Info);
+        try
+        {
+            await UpdateService.DownloadAndApplyAsync(info);
+        }
+        catch
+        {
+            MessageDialog.Confirm(this, "更新失败", "下载或替换失败，请稍后重试。", okText: "知道了", cancelText: null);
+        }
+    }
+
+    private void OnUninstall()
+    {
+        bool ok = MessageDialog.Confirm(this, "彻底卸载 / 清理",
+            "将清除开机自启项和本地数据（闹钟、设置），然后退出程序。\n之后删除这个 exe 文件即可彻底卸载。\n\n确定要清理吗？",
+            okText: "清理并退出", cancelText: "取消");
+        if (!ok) return;
+
+        Autostart.CleanUp();
+        _cleaned = true; // 退出时不要再写回存档
+        System.Windows.Application.Current.Shutdown();
+    }
+
+    private bool _cleaned;
 
     /// <summary>「提前提醒量」子菜单：0 / 1 / 3 / 5 / 10 分钟，当前项打勾。</summary>
     private Forms.ToolStripMenuItem BuildLeadMenu()
@@ -248,7 +309,7 @@ public partial class MainWindow : Window
     private void OnClosed(object? sender, EventArgs e)
     {
         _timer.Stop();
-        TaskStore.Save(_tasks);
+        if (!_cleaned) TaskStore.Save(_tasks);
         if (_trayIcon != null)
         {
             _trayIcon.Visible = false;
