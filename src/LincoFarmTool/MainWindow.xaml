@@ -85,14 +85,12 @@
                 <TextBlock Text="🌾 收菜闹钟" FontWeight="Bold" FontSize="14"
                            Foreground="#FF5A4A2E" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button x:Name="PlantBtn" Content="🌱 种菜" Height="26"
-                            FontSize="12" FontWeight="Bold" Padding="6,0"
-                            Foreground="#FFB5730A" Background="#FFFDEFC9" BorderBrush="#FFF0D9A8"
-                            Cursor="Hand" Click="OnPlant" ToolTip="种菜：一键设肝帝闹钟"/>
-                    <Button x:Name="AddBtn" Content="＋" Width="26" Height="26" Margin="6,0,0,0"
-                            FontSize="16" FontWeight="Bold"
-                            Foreground="#FF5A8A3A" Background="#FFEAF6DC" BorderBrush="#FFB9D89A"
-                            Cursor="Hand" Click="OnAddTask" ToolTip="手动添加单个闹钟"/>
+                    <Button x:Name="PlantBtn" Content="🌱 种菜" Height="28" FontSize="12"
+                            Style="{StaticResource AccentButton}" Click="OnPlant"
+                            ToolTip="种菜：一键设肝帝闹钟"/>
+                    <Button x:Name="AddBtn" Content="＋" Width="32" Height="28" Margin="6,0,0,0" FontSize="16"
+                            Style="{StaticResource PrimaryButton}" Click="OnAddTask"
+                            ToolTip="手动添加单个闹钟"/>
                 </StackPanel>
             </Grid>
 

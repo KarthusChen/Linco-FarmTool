@@ -1,49 +1,66 @@
 <Window x:Class="LincoFarmTool.AddTaskWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="添加收菜闹钟"
-        Width="320" SizeToContent="Height"
+        Title="添加闹钟"
+        Width="340" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ResizeMode="NoResize"
-        Background="#FFFCFAF3">
-    <StackPanel Margin="18">
+        FontFamily="Microsoft YaHei UI"
+        TextOptions.TextFormattingMode="Ideal">
 
-        <TextBlock Text="任务名（如：1号地 浇水）" FontWeight="Bold"/>
-        <TextBox x:Name="NameBox" Margin="0,4,0,0" Padding="4" FontSize="14"/>
+    <Border CornerRadius="18" Margin="12" Background="{StaticResource CardBg}"
+            BorderBrush="{StaticResource Line}" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="22" ShadowDepth="3" Opacity="0.28" Color="#7A6A4A"/>
+        </Border.Effect>
 
-        <TextBlock Text="提醒方式" FontWeight="Bold" Margin="0,14,0,0"/>
-        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-            <RadioButton x:Name="ModeCountdown" Content="倒计时" IsChecked="True"
-                         GroupName="Mode" Checked="OnModeChanged"/>
-            <RadioButton x:Name="ModeAbsolute" Content="指定时间"
-                         GroupName="Mode" Margin="16,0,0,0" Checked="OnModeChanged"/>
-        </StackPanel>
+        <StackPanel Margin="22,18,22,22">
 
-        <!-- 倒计时输入 -->
-        <StackPanel x:Name="CountdownPanel" Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Center">
-            <TextBox x:Name="HoursBox" Width="48" Text="0" Padding="4" TextAlignment="Center"/>
-            <TextBlock Text="小时" Margin="6,0,0,0" VerticalAlignment="Center"/>
-            <TextBox x:Name="MinutesBox" Width="48" Text="0" Padding="4" TextAlignment="Center" Margin="12,0,0,0"/>
-            <TextBlock Text="分钟后" Margin="6,0,0,0" VerticalAlignment="Center"/>
-        </StackPanel>
+            <!-- 标题栏（可拖动） -->
+            <Grid x:Name="Header" Background="Transparent" Margin="0,0,0,6">
+                <TextBlock Text="⏰ 添加闹钟" FontSize="16" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                <Button x:Name="CloseBtn" Content="✕" Width="28" Height="28" HorizontalAlignment="Right"
+                        Style="{StaticResource GhostButton}" FontSize="12" Click="OnCancel"/>
+            </Grid>
 
-        <!-- 指定时间输入 -->
-        <StackPanel x:Name="AbsolutePanel" Margin="0,10,0,0" Visibility="Collapsed">
+            <TextBlock Text="任务名（如：1号地 浇水）" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,4"/>
+            <TextBox x:Name="NameBox" Style="{StaticResource RoundTextBox}"/>
+
+            <TextBlock Text="提醒方式" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,14,0,4"/>
             <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="DayToday" Content="今天" IsChecked="True" GroupName="Day"/>
-                <RadioButton x:Name="DayTomorrow" Content="明天" Margin="16,0,0,0" GroupName="Day"/>
+                <RadioButton x:Name="ModeCountdown" Content="倒计时" IsChecked="True"
+                             GroupName="Mode" Style="{StaticResource Pill}" Checked="OnModeChanged"/>
+                <RadioButton x:Name="ModeAbsolute" Content="指定时间"
+                             GroupName="Mode" Style="{StaticResource Pill}" Checked="OnModeChanged"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,8,0,0" VerticalAlignment="Center">
-                <TextBox x:Name="HourBox" Width="48" Text="13" Padding="4" TextAlignment="Center"/>
-                <TextBlock Text=":" Margin="6,0,6,0" VerticalAlignment="Center" FontWeight="Bold"/>
-                <TextBox x:Name="MinuteBox" Width="48" Text="00" Padding="4" TextAlignment="Center"/>
-                <TextBlock Text="（24小时制）" Margin="8,0,0,0" VerticalAlignment="Center" Foreground="Gray"/>
-            </StackPanel>
-        </StackPanel>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
-            <Button Content="取消" Width="66" Height="30" Click="OnCancel" IsCancel="True"/>
-            <Button Content="确定" Width="66" Height="30" Margin="10,0,0,0" Click="OnOk" IsDefault="True"/>
+            <!-- 倒计时 -->
+            <StackPanel x:Name="CountdownPanel" Orientation="Horizontal" Margin="0,12,0,0" VerticalAlignment="Center">
+                <TextBox x:Name="HoursBox" Width="56" Text="0" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
+                <TextBlock Text="小时" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+                <TextBox x:Name="MinutesBox" Width="56" Text="0" TextAlignment="Center" Margin="14,0,0,0" Style="{StaticResource RoundTextBox}"/>
+                <TextBlock Text="分钟后" Margin="7,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Ink}"/>
+            </StackPanel>
+
+            <!-- 指定时间 -->
+            <StackPanel x:Name="AbsolutePanel" Margin="0,12,0,0" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="DayToday" Content="今天" IsChecked="True" GroupName="Day" Style="{StaticResource Pill}"/>
+                    <RadioButton x:Name="DayTomorrow" Content="明天" GroupName="Day" Style="{StaticResource Pill}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Center">
+                    <TextBox x:Name="HourBox" Width="56" Text="13" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
+                    <TextBlock Text=":" Margin="7,0,7,0" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                    <TextBox x:Name="MinuteBox" Width="56" Text="00" TextAlignment="Center" Style="{StaticResource RoundTextBox}"/>
+                    <TextBlock Text="24小时制" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Muted}" FontSize="12"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button Content="取消" Width="76" Style="{StaticResource GhostButton}" Click="OnCancel"/>
+                <Button Content="确定" Width="88" Margin="10,0,0,0" Style="{StaticResource PrimaryButton}" Click="OnOk" IsDefault="True"/>
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </Border>
 </Window>

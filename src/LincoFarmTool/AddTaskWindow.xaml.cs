@@ -15,6 +15,7 @@ public partial class AddTaskWindow : Window
     {
         InitializeComponent();
         Loaded += (_, _) => NameBox.Focus();
+        Header.MouseLeftButtonDown += (_, e) => { if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
     }
 
     private void OnModeChanged(object sender, RoutedEventArgs e)

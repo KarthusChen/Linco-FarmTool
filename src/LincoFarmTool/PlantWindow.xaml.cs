@@ -27,12 +27,15 @@ public partial class PlantWindow : Window
             NameBox.Focus();
         };
 
+        Header.MouseLeftButtonDown += (_, e) => { if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
+
         NameBox.TextChanged += (_, _) => RefreshPreview();
         foreach (var rb in new[] { Cycle1, Cycle8, Cycle16, Cycle32 })
             rb.Checked += (_, _) => RefreshPreview();
+        foreach (var rb in new[] { DayToday, DayYesterday, DayBefore })
+            rb.Checked += (_, _) => RefreshPreview();
         HourBox.TextChanged += (_, _) => RefreshPreview();
         MinuteBox.TextChanged += (_, _) => RefreshPreview();
-        PlantDate.SelectedDateChanged += (_, _) => RefreshPreview();
     }
 
     private void OnCropSelected(object sender, SelectionChangedEventArgs e)
@@ -68,18 +71,24 @@ public partial class PlantWindow : Window
     private void SetNow()
     {
         var now = DateTime.Now;
-        PlantDate.SelectedDate = now.Date;
+        DayToday.IsChecked = true;
         HourBox.Text = now.Hour.ToString("00");
         MinuteBox.Text = now.Minute.ToString("00");
+    }
+
+    private DateTime SelectedDay()
+    {
+        if (DayYesterday.IsChecked == true) return DateTime.Today.AddDays(-1);
+        if (DayBefore.IsChecked == true) return DateTime.Today.AddDays(-2);
+        return DateTime.Today;
     }
 
     private bool TryGetPlantTime(out DateTime plantTime)
     {
         plantTime = default;
-        if (PlantDate.SelectedDate is not DateTime date) return false;
         if (!int.TryParse(HourBox.Text.Trim(), out int h) || h < 0 || h > 23) return false;
         if (!int.TryParse(MinuteBox.Text.Trim(), out int m) || m < 0 || m > 59) return false;
-        plantTime = date.Date.AddHours(h).AddMinutes(m);
+        plantTime = SelectedDay().AddHours(h).AddMinutes(m);
         return true;
     }
 
