@@ -1,6 +1,5 @@
 using System.Windows;
 using LincoFarmTool.Models;
-using MessageBox = System.Windows.MessageBox;
 
 namespace LincoFarmTool;
 
@@ -28,50 +27,48 @@ public partial class AddTaskWindow : Window
         AbsolutePanel.Visibility = countdown ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    private void OnOk(object sender, RoutedEventArgs e)
+    private bool Fail(string message)
     {
+        ErrorText.Text = "⚠️ " + message;
+        ErrorText.Visibility = Visibility.Visible;
+        return false;
+    }
+
+    private bool TryBuild()
+    {
+        ErrorText.Visibility = Visibility.Collapsed;
+
         string name = NameBox.Text.Trim();
-        if (string.IsNullOrEmpty(name))
-        {
-            MessageBox.Show(this, "请先填写任务名", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
+        if (string.IsNullOrEmpty(name)) return Fail("请先填写任务名");
 
         DateTime target;
-
         if (ModeCountdown.IsChecked == true)
         {
             if (!int.TryParse(HoursBox.Text.Trim(), out int h) || h < 0 ||
                 !int.TryParse(MinutesBox.Text.Trim(), out int m) || m < 0)
-            {
-                MessageBox.Show(this, "小时和分钟请填非负整数", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (h == 0 && m == 0)
-            {
-                MessageBox.Show(this, "倒计时不能为 0", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+                return Fail("小时和分钟请填非负整数");
+            if (h == 0 && m == 0) return Fail("倒计时不能为 0");
             target = DateTime.Now.AddHours(h).AddMinutes(m);
         }
         else
         {
             if (!int.TryParse(HourBox.Text.Trim(), out int hh) || hh < 0 || hh > 23 ||
                 !int.TryParse(MinuteBox.Text.Trim(), out int mm) || mm < 0 || mm > 59)
-            {
-                MessageBox.Show(this, "时间请填 00:00 ~ 23:59", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+                return Fail("时间请填 00:00 ~ 23:59");
             var day = DayTomorrow.IsChecked == true ? DateTime.Today.AddDays(1) : DateTime.Today;
             target = day.AddHours(hh).AddMinutes(mm);
-
             // 选了“今天”但时间点已过 → 顺延到明天，避免立刻响
             if (target <= DateTime.Now && DayToday.IsChecked == true)
                 target = target.AddDays(1);
         }
 
         Result = new FarmTask { Name = name, TargetTime = target };
-        DialogResult = true;
+        return true;
+    }
+
+    private void OnOk(object sender, RoutedEventArgs e)
+    {
+        if (TryBuild()) DialogResult = true;
     }
 
     private void OnCancel(object sender, RoutedEventArgs e) => DialogResult = false;

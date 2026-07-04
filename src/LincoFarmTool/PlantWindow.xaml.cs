@@ -2,7 +2,8 @@ using System.Windows;
 using System.Windows.Controls;
 using LincoFarmTool.Models;
 using LincoFarmTool.Services;
-using MessageBox = System.Windows.MessageBox;
+using Brush = System.Windows.Media.Brush;
+using BrushConverter = System.Windows.Media.BrushConverter;
 
 namespace LincoFarmTool;
 
@@ -17,6 +18,11 @@ public partial class PlantWindow : Window
     public List<FarmTask>? Result { get; private set; }
 
     private bool _midMode; // 当前是否在「种了有一会了」tab
+
+    // 预览卡片配色：正常（琥珀）/ 报错（红）
+    private static readonly Brush OkBg = Hex("#FFFFF4E2"), OkLine = Hex("#FFF3DCB0"), OkTitle = Hex("#FFC0791A"), OkBody = Hex("#FF8A6428");
+    private static readonly Brush ErrBg = Hex("#FFFDECEC"), ErrLine = Hex("#FFF0C0C0"), ErrTitle = Hex("#FFC0392B"), ErrBody = Hex("#FFB0463C");
+    private static Brush Hex(string hex) => (Brush)new BrushConverter().ConvertFromString(hex)!;
 
     public PlantWindow()
     {
@@ -69,14 +75,23 @@ public partial class PlantWindow : Window
     private string CropName() =>
         string.IsNullOrWhiteSpace(NameBox.Text) ? $"{SelectedCycle()}h作物" : NameBox.Text.Trim();
 
-    /// <summary>读「种了有一会了」的剩余成熟 R 和湿润剩余 w（分钟）。</summary>
+    /// <summary>读「种了有一会了」的剩余成熟 R 和湿润剩余 w（分钟），并校验上限。</summary>
     private bool TryGetState(out double remaining, out double moisture, out string error)
     {
         remaining = moisture = 0;
         error = "";
+
+        double t = SelectedCycle() * 60.0;   // 自然周期
+        double w = t / 3.0;                   // 湿润满值上限
+
         if (!TryMinutes(RHour.Text, RMin.Text, out remaining) || remaining <= 0)
         {
             error = "剩余成熟时间要大于 0";
+            return false;
+        }
+        if (remaining > t)
+        {
+            error = $"剩余成熟时间不能超过自然周期 {SelectedCycle()} 小时";
             return false;
         }
         if (!TryMinutes(WHour.Text, WMin.Text, out moisture))
@@ -84,7 +99,18 @@ public partial class PlantWindow : Window
             error = "水分剩余时间填写有误";
             return false;
         }
+        if (moisture > w)
+        {
+            error = $"水分剩余不能超过湿润满值 {FormatMinutes(w)}（周期÷3）";
+            return false;
+        }
         return true;
+    }
+
+    private static string FormatMinutes(double minutes)
+    {
+        int m = (int)Math.Round(minutes);
+        return m >= 60 ? $"{m / 60}小时{m % 60}分" : $"{m}分";
     }
 
     private static bool TryMinutes(string h, string m, out double minutes)
@@ -114,10 +140,12 @@ public partial class PlantWindow : Window
         var alarms = BuildAlarms(out string error);
         if (alarms == null)
         {
-            PreviewTitle.Text = "肝帝模式预览";
+            SetPreviewError(true);
+            PreviewTitle.Text = "⚠️ 无法设置";
             PreviewBody.Text = error;
             return;
         }
+        SetPreviewError(false);
         if (alarms.Count == 0)
         {
             PreviewTitle.Text = "肝帝模式预览";
@@ -135,17 +163,21 @@ public partial class PlantWindow : Window
         PreviewBody.Text = head + "\n" + string.Join("\n", lines) + "\n" + leadNote;
     }
 
+    private void SetPreviewError(bool isError)
+    {
+        PreviewCard.Background = isError ? ErrBg : OkBg;
+        PreviewCard.BorderBrush = isError ? ErrLine : OkLine;
+        PreviewTitle.Foreground = isError ? ErrTitle : OkTitle;
+        PreviewBody.Foreground = isError ? ErrBody : OkBody;
+    }
+
     private void OnOk(object sender, RoutedEventArgs e)
     {
-        var alarms = BuildAlarms(out string error);
-        if (alarms == null)
+        var alarms = BuildAlarms(out _);
+        // 出错或已成熟时，预览区已给出提示，这里直接不关闭即可
+        if (alarms is not { Count: > 0 })
         {
-            MessageBox.Show(this, error, "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
-            return;
-        }
-        if (alarms.Count == 0)
-        {
-            MessageBox.Show(this, "作物已经成熟，无需设闹钟～", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            RefreshPreview();
             return;
         }
         Result = alarms;

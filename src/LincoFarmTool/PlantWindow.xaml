@@ -87,7 +87,7 @@
             </TabControl>
 
             <!-- 预览 -->
-            <Border Background="#FFFFF4E2" BorderBrush="#FFF3DCB0" BorderThickness="1"
+            <Border x:Name="PreviewCard" Background="#FFFFF4E2" BorderBrush="#FFF3DCB0" BorderThickness="1"
                     CornerRadius="12" Padding="14,12" Margin="0,16,0,0">
                 <StackPanel>
                     <TextBlock x:Name="PreviewTitle" Text="肝帝模式预览" FontWeight="Bold" Foreground="#FFC0791A"/>
