@@ -1,0 +1,56 @@
+<Window x:Class="LincoFarmTool.PlantWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="种菜 · 一键设肝帝闹钟"
+        Width="360" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#FFFCFAF3">
+    <StackPanel Margin="18">
+
+        <!-- 快速选作物（可选，选了自动填名字+周期） -->
+        <TextBlock Text="选择作物（可选，会自动带出周期）" FontWeight="Bold"/>
+        <ComboBox x:Name="CropCombo" Margin="0,4,0,0" Height="30"
+                  SelectionChanged="OnCropSelected" IsEditable="False"/>
+
+        <!-- 作物名 -->
+        <TextBlock Text="作物名" FontWeight="Bold" Margin="0,12,0,0"/>
+        <TextBox x:Name="NameBox" Margin="0,4,0,0" Padding="4" FontSize="14"/>
+
+        <!-- 自然周期 -->
+        <TextBlock Text="自然周期" FontWeight="Bold" Margin="0,12,0,0"/>
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+            <RadioButton x:Name="Cycle1"  Content="1小时"  GroupName="Cycle" Margin="0,0,14,0"/>
+            <RadioButton x:Name="Cycle8"  Content="8小时"  GroupName="Cycle" Margin="0,0,14,0"/>
+            <RadioButton x:Name="Cycle16" Content="16小时" GroupName="Cycle" IsChecked="True" Margin="0,0,14,0"/>
+            <RadioButton x:Name="Cycle32" Content="32小时" GroupName="Cycle"/>
+        </StackPanel>
+
+        <!-- 种植时间 -->
+        <TextBlock Text="种植时间（默认现在；也可填之前种下的时间）" FontWeight="Bold" Margin="0,12,0,0"/>
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,0" VerticalAlignment="Center">
+            <DatePicker x:Name="PlantDate" Width="130"/>
+            <TextBox x:Name="HourBox" Width="42" Text="00" Padding="4" TextAlignment="Center" Margin="8,0,0,0"/>
+            <TextBlock Text=":" Margin="5,0,5,0" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBox x:Name="MinuteBox" Width="42" Text="00" Padding="4" TextAlignment="Center"/>
+            <Button Content="此刻" Width="46" Height="28" Margin="10,0,0,0" Click="OnNow"/>
+        </StackPanel>
+
+        <!-- 预览 -->
+        <Border Background="#FFFFF6E6" BorderBrush="#FFF0D9A8" BorderThickness="1"
+                CornerRadius="8" Padding="10,8" Margin="0,14,0,0">
+            <StackPanel>
+                <TextBlock x:Name="PreviewTitle" Text="肝帝模式预览" FontWeight="Bold" Foreground="#FFB5730A"/>
+                <TextBlock x:Name="PreviewBody" Margin="0,4,0,0" FontSize="12"
+                           Foreground="#FF7A5A2A" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="取消" Width="70" Height="30" Click="OnCancel" IsCancel="True"/>
+            <Button Content="一键设肝帝闹钟" Width="130" Height="30" Margin="10,0,0,0"
+                    FontWeight="Bold" Foreground="White" Background="#FFE8863B"
+                    Click="OnOk" IsDefault="True"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

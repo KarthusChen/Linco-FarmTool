@@ -128,6 +128,19 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>点 🌱 种菜：一键生成肝帝模式的整串浇水/收割闹钟。</summary>
+    private void OnPlant(object sender, RoutedEventArgs e)
+    {
+        var dlg = new PlantWindow { Owner = this };
+        if (dlg.ShowDialog() == true && dlg.Result is { Count: > 0 } alarms)
+        {
+            foreach (var a in alarms) InsertSorted(a);
+            TaskStore.Save(_tasks);
+            _trayIcon?.ShowBalloonTip(4000, "🌱 已排好肝帝闹钟",
+                $"共 {alarms.Count} 个提醒，{alarms[^1].TargetTime:MM-dd HH:mm} 收割", Forms.ToolTipIcon.Info);
+        }
+    }
+
     /// <summary>点 ✕ 删除某个闹钟。</summary>
     private void OnDeleteTask(object sender, RoutedEventArgs e)
     {
@@ -156,7 +169,8 @@ public partial class MainWindow : Window
     private void SetupTrayIcon()
     {
         var menu = new Forms.ContextMenuStrip();
-        menu.Items.Add("添加闹钟", null, (_, _) => OnAddTask(this, new RoutedEventArgs()));
+        menu.Items.Add("🌱 种菜（肝帝一键）", null, (_, _) => OnPlant(this, new RoutedEventArgs()));
+        menu.Items.Add("添加单个闹钟", null, (_, _) => OnAddTask(this, new RoutedEventArgs()));
         menu.Items.Add("回到右下角", null, (_, _) => MoveToCorner());
         menu.Items.Add("清除已到点", null, (_, _) => ClearFired());
         menu.Items.Add(new Forms.ToolStripSeparator());
